@@ -1,0 +1,29 @@
+---
+# Copyright 2017, IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+qpress_version: 11-1
+qpress_version_base: "{{ qpress_version.split('-')[0] }}"
+qpress_url_base: https://repo.percona.com/apt/pool/main/q/qpress
+qpress_source: "qpress_{{ qpress_version_base }}.orig.tar.gz"
+qpress_source_sha1: 131d471e995058a4e6e445dfbb2c8eb464ee9925
+
+qpress_packaging_bzr_url: "lp:qpress-packaging/deb"
+
+qpress_build_dir: "/tmp/build_qpress_{{ qpress_version }}"
+
+qpress_build_deps:
+  - bzr
+  - debhelper
+  - g++
