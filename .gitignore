@@ -1,0 +1,4 @@
+build-hosts.yml
+*.retry
+*.swp
+.venv*

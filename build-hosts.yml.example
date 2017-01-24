@@ -1,0 +1,2 @@
+[build-hosts]
+build-host-1 ansible_user=user ansible_become_pass=pass ansible_ssh_host=172.29.236.24

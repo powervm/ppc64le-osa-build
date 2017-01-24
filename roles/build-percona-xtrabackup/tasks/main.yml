@@ -1,0 +1,74 @@
+---
+# Copyright 2017, IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Install build dependencies
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 60
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ percona_build_deps }}"
+  become: yes
+
+- name: Make sure old build directories are clean
+  file:
+    path: "{{ item }}"
+    state: "absent"
+  with_items:
+   - "{{ percona_build_dir }}"
+
+- name: Create XtraBackup build directory
+  file:
+    path: "{{ percona_build_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Download XtraBackup source
+  get_url:
+    url: "{{ percona_xtrabackup_url_base }}/{{ percona_xtrabackup_source }}"
+    dest: "{{ percona_build_dir }}"
+    checksum: sha1:"{{ percona_xtrabackup_source_sha1 }}"
+
+- name: Download XtraBackup packaging
+  get_url:
+    url: "{{ percona_xtrabackup_url_base }}/{{ percona_xtrabackup_packaging }}"
+    dest: "{{ percona_build_dir }}"
+    checksum: sha1:"{{ percona_xtrabackup_packaging_sha1 }}"
+
+- name: Unpack XtraBackup source
+  unarchive:
+    src: "{{ percona_build_dir }}/{{ percona_xtrabackup_source }}"
+    dest: "{{ percona_build_dir }}"
+    remote_src: yes
+
+- name: Unpack XtraBackup packaging
+  unarchive:
+    src: "{{ percona_build_dir}}/{{ percona_xtrabackup_packaging }}"
+    dest: "{{ percona_build_dir }}/percona-xtrabackup-{{ percona_xtrabackup_version }}"
+    remote_src: yes
+
+- name: Build Percona XtraBackup
+  command: dpkg-buildpackage
+  args:
+    chdir: "{{ percona_build_dir }}/percona-xtrabackup-{{ percona_xtrabackup_version }}"
+
+- name: Fetch percona-xtrabackup package file
+  fetch:
+    src: "{{ percona_build_dir }}/percona-xtrabackup-{{ percona_xtrabackup_version_base }}_{{ percona_xtrabackup_version }}-1_ppc64el.deb"
+    dest: "{{ local_build_destination }}"
