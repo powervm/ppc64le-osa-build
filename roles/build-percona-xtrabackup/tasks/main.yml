@@ -70,5 +70,5 @@
 
 - name: Fetch percona-xtrabackup package file
   fetch:
-    src: "{{ percona_build_dir }}/percona-xtrabackup-{{ percona_xtrabackup_version_base }}_{{ percona_xtrabackup_version }}-1_ppc64el.deb"
+    src: "{{ percona_build_dir }}/percona-xtrabackup-{{ percona_xtrabackup_version_base }}_{{ percona_xtrabackup_version }}-1_{{ ansible_architecture }}.deb"
     dest: "{{ local_build_destination }}"
