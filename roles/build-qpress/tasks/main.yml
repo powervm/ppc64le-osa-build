@@ -66,5 +66,5 @@
 
 - name: Fetch qpress package file
   fetch:
-    src: "{{ qpress_build_dir }}/qpress_{{ qpress_version }}_ppc64el.deb"
+    src: "{{ qpress_build_dir }}/qpress_{{ qpress_version }}_{{ ansible_architecture }}.deb"
     dest: "{{ local_build_destination }}"
